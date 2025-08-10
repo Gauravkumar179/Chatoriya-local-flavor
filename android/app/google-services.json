@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "892346910003",
+    "firebase_url": "https://phone-firebase-7f6f4-default-rtdb.firebaseio.com",
+    "project_id": "phone-firebase-7f6f4",
+    "storage_bucket": "phone-firebase-7f6f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892346910003:android:c7233ebb70e1cf0ea9ea46",
+        "android_client_info": {
+          "package_name": "com.chatoriya_localflavor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892346910003-qv9fv5b4lh9ussn1i2qnckibg7glc867.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chatoriya_localflavor",
+            "certificate_hash": "e5e5b8ada17339b17abb9effe3aadf6592b39c50"
+          }
+        },
+        {
+          "client_id": "892346910003-uc1kon6ua7emjt2b8p9p4gr44j0bq5mn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVwqUO5ULr7A76CZh4YmP_h-My_TfLZrc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892346910003-uc1kon6ua7emjt2b8p9p4gr44j0bq5mn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
