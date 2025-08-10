@@ -1,9 +1,11 @@
 
 # Chatoriya-local-flavor
-# React native
-# TypeScript
-# Redux State management
-# Firebase db
+
+1.React native
+2.TypeScript
+3.Redux State management
+4.Firebase db
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
@@ -101,4 +103,5 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
 >>>>>>> 786e9c9 (Initial commit)
