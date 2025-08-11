@@ -18,6 +18,9 @@ import OrdersScreen from './src/screens/orderScreen';
 
 // 1) Import your SplashScreen component (adjust the path if needed)
 import { SplashScreen } from './src/screens/SplashScreen';
+import UsersScreen from './src/screens/alluser';
+import OrdersDashboard from './src/screens/orderdashboard';
+import FilteredOrdersScreen from './src/screens/filteredOrderscreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -79,6 +82,10 @@ function AppNavigator() {
             <Stack.Screen name="AddAddress" component={AddAddressScreen} />
             <Stack.Screen name="OrderSuccess" component={OrderSuccessScreen} />
             <Stack.Screen name="Order" component={OrdersScreen} />
+            <Stack.Screen name="Allusers" component={UsersScreen} />
+            <Stack.Screen name="OrdersDashboard" component={OrdersDashboard} />
+            <Stack.Screen name="FilteredOrders" component={FilteredOrdersScreen} />
+
           </>
         ) : (
           <>
