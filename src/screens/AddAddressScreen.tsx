@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
@@ -11,10 +11,27 @@ const AddAddressScreen = () => {
   const [mobile, setMobile] = useState('');
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
+  const [state, setState] = useState('');
   const [pincode, setPincode] = useState('');
 
+   useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerTitleAlign: 'center',
+      headerTitle: 'Add Address',
+      headerStyle: {
+        backgroundColor: '#2e86de', // blue header
+      },
+      headerTintColor: '#fff', // back button and title text white
+      headerTitleStyle: {
+        fontWeight: '700',
+        fontSize: 20,
+      },
+    });
+  }, [navigation]);
+
   const handleSave = async () => {
-    if (!name || !mobile || !street || !city || !pincode) {
+    if (!name || !mobile || !street || !city || !pincode|| !state) {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
@@ -32,6 +49,7 @@ const AddAddressScreen = () => {
         mobile,
         street,
         city,
+        state,
         pincode,
         createdAt: serverTimestamp(),
       };
@@ -78,6 +96,13 @@ const AddAddressScreen = () => {
         placeholder="City"
         value={city}
         onChangeText={setCity}
+        style={styles.input}
+      />
+
+      <TextInput
+        placeholder="State"
+        value={state}
+        onChangeText={setState}
         style={styles.input}
       />
 

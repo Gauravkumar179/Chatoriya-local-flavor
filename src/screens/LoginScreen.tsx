@@ -16,6 +16,9 @@ import { useDispatch } from 'react-redux';
 import { setUser } from './store';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import { getFirestore } from '@react-native-firebase/firestore';
+import { saveUserName, saveUserRole } from './localStorage';  // Adjust path as needed
+
 
 type RootStackParamList = {
   Login: undefined;
@@ -39,7 +42,7 @@ const LoginScreen = () => {
       const auth = getAuth();
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-      // Save user in Redux (skip verification check)
+      // // Save user in Redux (skip verification check)
       dispatch(
         setUser({
           uid: userCredential.user.uid,
@@ -47,6 +50,33 @@ const LoginScreen = () => {
           displayName: userCredential.user.displayName ?? null,
         })
       );
+
+      const uid = userCredential.user.uid;
+      const db = getFirestore();
+
+      // 🔹 Fetch user document from Firestore
+      const userDoc = await db.collection('users').doc(uid).get();
+
+      if (!userDoc.exists) {
+        Alert.alert('Error', 'User profile not found in database.');
+        return;
+      }
+
+      const userData = userDoc.data();
+      await saveUserRole(userData?.role?? 'No Role'); // or 'user', 'delivery'
+      await saveUserName(userData?.displayName ?? ''); // Save user name
+
+
+      // 🔹 Save user in Redux
+      // dispatch(
+      //   setUser({
+      //     uid,
+      //     email: userData?.email || '',
+      //     displayName: userData?.displayName || '',
+      //     role: userData?.role ||'',
+      //   })
+      // );
+
 
       // Navigate directly to BottomTabs
       navigation.reset({ index: 0, routes: [{ name: 'BottomTabs' }] });
@@ -117,3 +147,5 @@ const styles = StyleSheet.create({
   },
   link: { marginTop: 15, textAlign: 'center', color: '#007bff', fontSize: 16 },
 });
+
+

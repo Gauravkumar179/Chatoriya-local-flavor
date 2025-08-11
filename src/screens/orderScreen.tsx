@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -12,15 +12,18 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { captureRef } from 'react-native-view-shot';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
 const OrdersScreen = () => {
+  const navigation = useNavigation();
   const [orders, setOrders] = useState<any[]>([]);
   const userId = auth().currentUser?.uid;
 
@@ -29,6 +32,24 @@ const OrdersScreen = () => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const invoiceRef = useRef<View>(null);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      title: 'Your Orders',
+      headerTitleAlign: 'center',
+      headerStyle: {
+        backgroundColor: '#007BFF',
+        shadowColor: 'transparent', // iOS shadow removal
+        elevation: 0, // Android shadow removal
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+        fontSize: 20,
+      },
+    });
+  }, [navigation]);
 
   useEffect(() => {
     if (userId) {
@@ -40,12 +61,10 @@ const OrdersScreen = () => {
             setOrders([]);
             return;
           }
-
           const fetchedOrders = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
           }));
-
           setOrders(fetchedOrders);
         });
 
@@ -53,12 +72,10 @@ const OrdersScreen = () => {
     }
   }, [userId]);
 
-  // Request WRITE_EXTERNAL_STORAGE permission for Android <= API 32
   const requestWritePermission = async () => {
     if (Platform.OS !== 'android') return true;
 
     if (Platform.Version >= 33) {
-      // Android 13+ storage permissions changed, WRITE_EXTERNAL_STORAGE not needed
       return true;
     }
 
@@ -255,14 +272,14 @@ const OrdersScreen = () => {
   };
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <FlatList
         contentContainerStyle={styles.container}
         data={orders}
         keyExtractor={item => item.id}
         renderItem={renderOrder}
-        ListEmptyComponent={<Text>No orders found.</Text>}
-        ListHeaderComponent={<Text style={styles.heading}>📦 Your Orders</Text>}
+        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No orders found.</Text>}
+       // ListHeaderComponent={<Text style={styles.heading}>📦 Your Orders</Text>}
       />
 
       <Modal visible={modalVisible} animationType="slide" transparent={false}>
@@ -295,7 +312,7 @@ const OrdersScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </>
+    </SafeAreaView>
   );
 };
 
@@ -309,6 +326,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
+    alignSelf: 'center',
   },
   orderCard: {
     backgroundColor: '#f9f9f9',

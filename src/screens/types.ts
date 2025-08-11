@@ -6,6 +6,10 @@ export type RootStackParamList = {
   AddAddress: undefined;
   BottomTabs: undefined;
   OrderSuccess: undefined;
+  Allusers: undefined;
+  UserProfile: undefined;
+  OrdersDashboard: undefined;
+  FilteredOrders: { statusFilter: 'pending' | 'shipped' | 'delivered'| 'not_delivered'|'all' };
 };
 
 export type CartItem = {

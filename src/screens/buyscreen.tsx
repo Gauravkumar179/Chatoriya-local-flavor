@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -35,6 +35,21 @@ const BuyScreen = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerTitle: 'Place Order',
+      headerTitleAlign: 'center',
+      headerStyle: {
+        backgroundColor: '#2e86de', // blue header
+      },
+      headerTintColor: '#fff', // back button and title text white
+      headerTitleStyle: {
+        fontWeight: '700',
+        fontSize: 20,
+      },
+    });
+  }, [navigation]);
 
   useEffect(() => {
     if (userId) {
@@ -53,6 +68,7 @@ const BuyScreen = () => {
       return () => unsubscribe();
     }
   }, [userId]);
+  
 
   const handleContinue = async () => {
     if (!selectedAddress) {
@@ -92,6 +108,7 @@ const BuyScreen = () => {
       Alert.alert('Error', 'Failed to place order');
     }
   };
+  
 
   const renderItem = ({ item }: { item: CartItem }) => (
     <View style={styles.card}>
@@ -106,7 +123,7 @@ const BuyScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>🧾 Order Summary</Text>
+      {/* <Text style={styles.header}>🧾 Order Summary</Text> */}
 
       <FlatList
         data={cartItems}
@@ -127,8 +144,8 @@ const BuyScreen = () => {
             ]}
             onPress={() => setSelectedAddress(addr)}
           >
-            <Text>{addr.line1}, {addr.line2}</Text>
-            <Text>{addr.city}, {addr.state} - {addr.pincode}</Text>
+            <Text>{addr.name}, {addr.mobile}</Text>
+            <Text>{addr.street}, {addr.city}, {addr.state} - {addr.pincode}</Text>
           </TouchableOpacity>
         ))}
 

@@ -70,6 +70,7 @@ const RegisterScreen = () => {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
         displayName: username,
+        role: 'user', // Default role
         createdAt: serverTimestamp(),
       });
 

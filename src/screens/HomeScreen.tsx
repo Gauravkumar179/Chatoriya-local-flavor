@@ -16,12 +16,15 @@ import { getAuth, signOut } from '@react-native-firebase/auth';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { getUserName } from './localStorage';  // Adjust path as needed
+
 import {
   getFirestore,
   collection,
   getDocs,
 } from '@react-native-firebase/firestore';
 import ProductDetailsSheet from './ProductDetailScreen'; // make sure path is correct
+
 
 type RootStackParamList = {
   BottomTabs: undefined;
@@ -46,21 +49,30 @@ const HomeScreen = () => {
   const [showSheet, setShowSheet] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
   // Inside HomeScreen component
-const [placeholder, setPlaceholder] = useState('Search for Pizza');
+  const [placeholder, setPlaceholder] = useState('Search for Pizza');
 
-const foodItems = ['Pizza', 'Burger', 'Pasta', 'Sushi', 'Sandwich'];
+  const foodItems = ['Pizza', 'Burger', 'Pasta', 'Sushi', 'Sandwich'];
+  const [name, setName] = useState<string | null>(null);
 
-useEffect(() => {
-  let index = 0;
-  const intervalId = setInterval(() => {
-    if (searchQuery.trim() === '') { // only rotate if input is empty
-      index = (index + 1) % foodItems.length;
-      setPlaceholder(`Search for "${foodItems[index]}"`);
-    }
-  }, 2000);
+  useEffect(() => {
+    const loadName = async () => {
+      const storedName = await getUserName();
+      setName(storedName);
+    };
+    loadName();
+  }, []);
 
-  return () => clearInterval(intervalId);
-}, [searchQuery]);
+  useEffect(() => {
+    let index = 0;
+    const intervalId = setInterval(() => {
+      if (searchQuery.trim() === '') { // only rotate if input is empty
+        index = (index + 1) % foodItems.length;
+        setPlaceholder(`Search for "${foodItems[index]}"`);
+      }
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [searchQuery]);
 
 
 
@@ -107,13 +119,10 @@ useEffect(() => {
       ),
       headerStyle: { backgroundColor: '#007BFF' },
       headerRight: () => (
-        <Icon
-          name="logout"
-          style={styles.logouticon}
-          color="#fff"
-          size={24}
-          onPress={() => handleLogout()}
-        />
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingRight: 10 }}>
+          <Text style={{ color: '#fff', fontSize: 16, marginRight: 8 }}>{name ?? ''}</Text>
+          <Icon name="logout" color="#fff" size={24} onPress={handleLogout} />
+        </View>
       ),
     });
   });
@@ -141,12 +150,12 @@ useEffect(() => {
       <View style={styles.searchContainer}>
         <Icon name="search" size={24} color="#888" style={styles.icon} />
         <TextInput
-  placeholder={searchQuery.trim() === '' ? placeholder : ''}
-  value={searchQuery}
-  onChangeText={setSearchQuery}
-  style={styles.searchInput}
-  placeholderTextColor="#888"
-/>
+          placeholder={searchQuery.trim() === '' ? placeholder : ''}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          style={styles.searchInput}
+          placeholderTextColor="#888"
+        />
 
 
       </View>

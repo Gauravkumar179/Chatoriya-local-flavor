@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,14 @@ import {
   TouchableOpacity,
   Alert,
   Button,
+  SafeAreaView,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import CheckBox from '@react-native-community/checkbox'; // Make sure this is installed
+import CheckBox from '@react-native-community/checkbox';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, CartItem } from './types';
@@ -23,6 +26,24 @@ const CartScreen = () => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const navigation = useNavigation<NavigationProp>();
+
+  // Set header options (title, style)
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: 'Your Cart',
+      headerShown: true,
+      headerTitleAlign: 'center',
+      headerStyle: {
+        backgroundColor: '#007BFF',
+        
+      },
+      headerTintColor: '#fff', // back button & title color
+      headerTitleStyle: {
+        fontWeight: '700',
+        fontSize: 20,
+      },
+    });
+  }, [navigation]);
 
   const handleToggleCheckbox = (itemId: string) => {
     setSelectedIds(prev => {
@@ -63,7 +84,7 @@ const CartScreen = () => {
             ...(doc.data() as Omit<CartItem, 'id'>),
           }));
           setItems(data);
-          setSelectedIds(new Set()); // Reset selections on data reload
+          setSelectedIds(new Set()); // reset selections on data reload
         },
         error => {
           console.error('❌ Firestore error:', error);
@@ -98,6 +119,8 @@ const CartScreen = () => {
           value={isChecked}
           onValueChange={() => handleToggleCheckbox(item.id)}
           tintColors={{ true: '#4CAF50', false: '#aaa' }}
+          boxType="square"
+          style={styles.checkbox}
         />
         <Image source={{ uri: item.image }} style={styles.image} />
         <View style={styles.details}>
@@ -114,36 +137,40 @@ const CartScreen = () => {
           }
           style={styles.deleteButton}
         >
-          <Icon name="delete" size={24} color="white" />
+          <Icon name="delete" size={24} color="red" />
         </TouchableOpacity>
       </View>
     );
   };
 
   return (
-    <View style={{ flex: 1 }}>
-  <FlatList
-    data={items}
-    keyExtractor={item => item.id}
-    renderItem={renderItem}
-    ListEmptyComponent={
-      <View style={styles.emptyContainer}>
-        <Text style={styles.empty}>No item added yet</Text>
-      </View>
-    }
-    contentContainerStyle={items.length === 0 ? { flex: 1 } : { flexGrow: 1 }}
-  />
-  {items.length > 0 && (
-    <View style={styles.footer}>
-      <Button title="Proceed to Buy" onPress={handleProceedToBuy} />
-    </View>
-  )}
-</View>
-
+    <SafeAreaView style={styles.safeArea}>
+      <FlatList
+        data={items}
+        keyExtractor={item => item.id}
+        renderItem={renderItem}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.empty}>No item added yet</Text>
+          </View>
+        }
+        contentContainerStyle={items.length === 0 ? { flex: 1 } : { flexGrow: 1 }}
+      />
+      {items.length > 0 && (
+        <View style={styles.footer}>
+          <Button title="Proceed to Buy" onPress={handleProceedToBuy} />
+        </View>
+      )}
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+   // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, // avoid notch overlap on android
+  },
   itemContainer: {
     flexDirection: 'row',
     margin: 10,
@@ -151,6 +178,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
+  },
+  checkbox: {
+    marginRight: 8,
   },
   image: {
     width: 80,
@@ -167,13 +197,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   deleteButton: {
-    backgroundColor: '#ff4d4d',
+   // backgroundColor: '#ff4d4d',
     padding: 8,
     borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
   footer: {
     padding: 16,
     backgroundColor: '#fff',
@@ -181,15 +210,14 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   emptyContainer: {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-empty: {
-  fontSize: 16,
-  color: '#999',
-},
-
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  empty: {
+    fontSize: 16,
+    color: '#999',
+  },
 });
 
 export default CartScreen;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -6,6 +6,13 @@ import { View, Text } from 'react-native';
 import CartScreen from './CartScreen';
 import UserProfileScreen from './userProfileScreen';
 import OrdersScreen from './orderScreen';
+import { useSelector } from 'react-redux';
+import { RootState } from '../screens/store'; // adjust import
+import UsersScreen from './alluser';
+import { getUserRole } from './localStorage';  // Adjust path as needed
+import OrdersDashboard from './orderdashboard';
+
+
 
 const Tab = createBottomTabNavigator();
 
@@ -16,6 +23,16 @@ const DummyScreen = ({ title }: { title: string }) => (
 );
 
 const BottomTabs = () => {
+  const [role, setRole] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const loadRole = async () => {
+      const storedRole = await getUserRole();
+      setRole(storedRole);
+    };
+    loadRole();
+  }, []);
+   console.log('User role:', role); // Debugging line to check the role
   return (
     <Tab.Navigator
       screenOptions={{
@@ -36,7 +53,7 @@ const BottomTabs = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={role=='user'? HomeScreen:OrdersDashboard}
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color }) => (
@@ -44,6 +61,7 @@ const BottomTabs = () => {
           ),
         }}
       />
+       {role === 'user' && (
       <Tab.Screen
         name="Orders"
        component={OrdersScreen}
@@ -53,17 +71,31 @@ const BottomTabs = () => {
             <Icon name="receipt-long" color={color} size={24} />
           ),
         }}
-      />
-       <Tab.Screen
-        name="Cart"
-       component={ CartScreen }
-        options={{
-          tabBarLabel: 'Cart',
-          tabBarIcon: ({ color }) => (
-            <Icon name="shopping-cart" color={color} size={24} />
-          ),
-        }}
-      />
+      />)}
+        {role === 'user' && (
+        <Tab.Screen
+          name="Cart"
+          component={CartScreen}
+          options={{
+            tabBarLabel: 'Cart',
+            tabBarIcon: ({ color }) => (
+              <Icon name="shopping-cart" color={color} size={24} />
+            ),
+          }}
+        />
+      )}
+       {role === 'admin' && (
+        <Tab.Screen
+          name="Users"
+          component={UsersScreen}
+          options={{
+            tabBarLabel: 'Users',
+            tabBarIcon: ({ color }) => (
+              <Icon name="group" color={color} size={24} />
+            ),
+          }}
+        />
+      )}
       <Tab.Screen
         name="Profile"
         component={UserProfileScreen}
